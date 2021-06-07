@@ -1,0 +1,13 @@
+name: drogue-ditto-converter
+namespace: drogue-iot
+runtime: quarkus
+image: quay.io/dejanb/drogue-ditto-converter:latest
+imageDigest: sha256:8a1c8bd5d896ecba009abf14ded4a9236bbd22c7732cd4b4ec8328864d4329a6
+trigger: events
+builder: native
+builderMap:
+  default: quay.io/boson/faas-quarkus-jvm-builder
+  jvm: quay.io/boson/faas-quarkus-jvm-builder
+  native: quay.io/boson/faas-quarkus-native-builder
+env: {}
+annotations: {}
