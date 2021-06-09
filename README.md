@@ -48,6 +48,12 @@ func deploy -v # also triggers build
 FUNC_BUILD=false func deploy -v # without triggering the build
 ```
 
+Deploy additional resources
+
+```shell script
+kubectl -n drogue-iot apply -f src/main/k8s/ditto-converter.yaml
+```
+
 ## Function invocation
 
 Do not forget to set `URL` variable to the route of your function.
@@ -72,4 +78,21 @@ http -v ${URL} \
   Ce-Dataschema:ditto:simple-thing \
   temp=22.0 \
   hum=52.0
+```
+
+### Use with Drogue
+
+```shell script
+# Create Drogue Cloud resources
+drg create app app_id
+drg create device --app app_id simple-thing --data '{"credentials": {"credentials":[{ "pass": "foobar" }]}}'
+
+# Create Ditto resources
+echo "{}"  | http --auth ditto:ditto PUT http://$TWIN_API/api/2/things/app_id:simple-thing
+
+# Send telemetry
+http --auth simple-thing@app_id:foobar --verify build/certs/endpoints/ca-bundle.pem POST https://$HTTP_ENDPOINT/v1/foo data_schema==ditto:test temp:=23
+
+# Check device state
+http --auth ditto:ditto http://$TWIN_API/api/2/things/app_id:simple-thing
 ```
